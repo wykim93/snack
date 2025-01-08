@@ -1,38 +1,44 @@
 version: 2.1
 
 executors:
-  docker-executor:
+  default-executor:
     docker:
-      - image: docker:27.4.1
+      - image: cimg/node:18.0
     working_directory: /home/circleci/project
 
 jobs:
   build:
-    docker:
-      - image: cimg/node:18.0
+    executor: default-executor
     steps:
       - checkout
       - run:
-          name: "Install Dependencies"
-          command: npm install
+          name: Check Directory Structure
+          command: |
+            echo "Current Directory:"
+            pwd
+            echo "Contents:"
+            ls -al
       - run:
-          name: "Run Tests"
-          command: npm test
+          name: Install Dependencies
+          command: |
+            cd front
+            npm install
 
   build-and-push:
-    executor: docker-executor
+    executor: default-executor
     steps:
       - setup_remote_docker
       - checkout
       - run:
           name: Build Docker Image
           command: |
-            docker build -t my-docker-image:1.0 .
+            cd front
+            docker build -t wonyoung1/front:1.0 .
       - run:
           name: Push Docker Image to Docker Hub
           command: |
             echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-            docker push my-docker-image:1.0
+            docker push wonyoung1/front:1.0
 
 workflows:
   version: 2
