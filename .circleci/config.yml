@@ -1,52 +1,35 @@
 version: 2.1
 
-# Define jobs for backend and frontend
+executors:
+  docker-executor:
+    docker:
+      - image: docker:27.4.1
+    working_directory: ~/snack
 jobs:
-  back-job:
-    docker:
-      - image: cimg/node:18.0  # Node.js 버전, 백엔드 실행 환경에 맞게 변경
-    working_directory: /home/kevin/snack/cicd_project/back
+  build-and-push:
+    executor: docker-executor
     steps:
-      - checkout
-      - run:
-          name: "Install Backend Dependencies"
-          command: npm install
-      - run:
-          name: "Run Backend Tests"
-          command: npm test
+      - setup_remote_docker  # Docker 사용 설정
+      - checkout  # GitHub 코드 체크아웃
 
-  front-job:
-    docker:
-      - image: cimg/node:18.0  # Node.js 버전, 프론트엔드 실행 환경에 맞게 변경
-    working_directory: /home/kevin/snack/cicd_project/front
-    steps:
-      - checkout
       - run:
-          name: "Install Frontend Dependencies"
-          command: npm install
-      - run:
-          name: "Run Frontend Tests"
-          command: npm test
+          name: Install Dependencies
+          command: |
+            cd front
 
-  manifest-job:
-    docker:
-      - image: cimg/base:current  # Kubernetes manifest 작업을 위한 기본 이미지
-    working_directory: /home/kevin/snack/cicd_project/manifest
-    steps:
-      - checkout
       - run:
-          name: "Validate Kubernetes Manifest"
-          command: kubectl apply --dry-run=client -f .
+          name: Build Docker Image
+          command: |
+            docker build -t wonyoung1/front:1.0 .
 
-# Define workflow to orchestrate jobs
+      - run:
+          name: Push Docker Image to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+            docker push wonyoung1/front:1.0
+
 workflows:
   version: 2
-  build-and-test:
+  build-and-deploy:
     jobs:
-      - back-job
-      - front-job
-      - manifest-job:
-          requires:
-            - back-job
-            - front-job
-
+      - build-and-push
