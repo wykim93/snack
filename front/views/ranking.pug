@@ -1,0 +1,48 @@
+doctype html
+html(lang="ko")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title #{title}
+    link(href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="/css/style.css")
+
+  body
+    // 메뉴 버튼
+    .menu-button-container
+      button.menu-button(onclick="openMenu()") ☰
+
+    // 슬라이드 메뉴
+    .slide-menu#slideMenu
+      ul.menu-items
+        li.menu-item
+          a(href="/") Home
+        li.menu-item
+          a(href="/ranking") Ranking
+      button.close-menu(onclick="closeMenu()") ✖
+
+    .header
+      h1.logo Rapa
+      h2.title Snack Rankings
+
+    main
+      h2 Snack Rankings
+      .rank-container
+        .rank-content
+          each snack, index in snacks
+            .rank-box-container
+              .rank-box
+                span.rank-number #{index + 1} 
+                img(src=snack.image alt=snack.name)
+              .snack-name #{snack.name} 
+
+    script.
+      function openMenu() {
+        const menu = document.getElementById("slideMenu");
+        menu.style.transform = "translateX(0)";
+      }
+
+      function closeMenu() {
+        const menu = document.getElementById("slideMenu");
+        menu.style.transform = "translateX(-100%)";
+      }

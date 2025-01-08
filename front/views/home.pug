@@ -1,0 +1,46 @@
+doctype html
+html(lang="ko")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title #{title}
+    link(href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="/css/style.css")
+    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+
+  body
+    // 메뉴 버튼
+    .menu-button-container
+      button.menu-button(onclick="openMenu()") ☰
+
+    // 슬라이드 메뉴
+    .slide-menu#slideMenu
+      ul.menu-items
+        li.menu-item
+          a(href="/") Home
+        li.menu-item
+          a(href="/ranking") Ranking
+      button.close-menu(onclick="closeMenu()") ✖
+
+    // 헤더
+    .header
+      h1.logo Rapa
+      h2.title Today's Snack
+      h3.version.ver2 ver 2
+
+    // 본문 내용
+    main.container.posts.mt-0
+      .content-section
+        include list.pug
+
+    // JavaScript 코드
+    script.
+      function openMenu() {
+        const menu = document.getElementById("slideMenu");
+        menu.style.transform = "translateX(0)";
+      }
+
+      function closeMenu() {
+        const menu = document.getElementById("slideMenu");
+        menu.style.transform = "translateX(-100%)";
+      }

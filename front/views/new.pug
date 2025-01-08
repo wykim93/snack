@@ -1,0 +1,62 @@
+doctype html
+html
+  head
+    title Snack Submission
+    link(rel="stylesheet" href="/css/style.css")
+
+    // script.js 내용 포함
+    script.
+      async function submitSnack(event) {
+        event.preventDefault();
+        const name = document.getElementById("snackName").value;
+        const imageFile = document.getElementById("photo").files[0];
+        const calories = document.getElementById("calories").value || "정보 없음";
+        const carbohydrates = document.getElementById("carbohydrates").value || "정보 없음";
+        const protein = document.getElementById("protein").value || "정보 없음";
+        const fat = document.getElementById("fat").value || "정보 없음";
+
+        if (!imageFile) {
+          alert("Please select an image file.");
+          console.error("No image file selected.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64Image = reader.result;
+          const snackData = {
+            name: name,
+            nutritionalIngredients: {
+              칼로리: calories,
+              탄: carbohydrates,
+              단: protein,
+              지: fat,
+            },
+            image: base64Image,
+          };
+
+          try {
+            console.log(snackData)
+            const response = await fetch("/post", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(snackData),
+            });
+
+            if (response.ok) {
+              alert("Snack successfully added to MongoDB!");
+              document.getElementById("snackForm").reset();
+            } else {
+              const error = await response.json();
+              alert("Failed to add snack: " + error.message);
+            }
+          } catch (error) {
+            console.error("Error submitting snackkk:", error);
+            alert("An error occurred while submitting the snack.");
+          }
+        };
+
+        reader.readAsDataURL(imageFile);
+      }
