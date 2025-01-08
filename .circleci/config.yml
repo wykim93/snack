@@ -1,22 +1,28 @@
-version: 2.1
-
 orbs:
-  slack: circleci/slack@4.8.0  # Slack Orb 추가
+  slack: circleci/slack@4.1.1
+
+commands:
+  set_slack:
+    steps:
+      - run:
+          name: Set Message Info
+          when: always
+          command: |
+            SLACK_SUCCESS=$(cat .circleci/template/slack.json)
+            echo "export SLACK_SUCCESS='${SLACK_SUCCESS}'" >> $BASH_ENV
+            source $BASH_ENV
 
 jobs:
-  say-hello:
-    docker:
-      - image: cimg/base:current
+  build:
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - set_slack
+      - slack/notify:
+          event: pass
+          template: SLACK_SUCCESS
 
 workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
-      - slack/notify: # Slack 알림 추가
-          event: always
-
+  version: 2
+    build_and_test:
+      jobs:
+        - build
