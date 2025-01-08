@@ -6,6 +6,4 @@ metadata:
   creationTimestamp: "2025-01-02T08:52:28Z"
   name: snack-db-pwd
   namespace: db
-  resourceVersion: "2100649"
-  uid: 12723b03-d638-4c47-8be0-a7077344979a
 type: Opaque

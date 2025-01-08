@@ -6,6 +6,4 @@ metadata:
   creationTimestamp: "2025-01-02T08:52:17Z"
   name: snack-back-pwd
   namespace: back
-  resourceVersion: "2100615"
-  uid: cd3cd025-935c-4d3a-8e43-4e94a0619abb
 type: Opaque
