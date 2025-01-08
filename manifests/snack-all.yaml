@@ -1,0 +1,191 @@
+################################################################################
+# 1) snack-db Deployment
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snack-db
+  namespace: db
+  labels:
+    app: snack-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snack-db
+  template:
+    metadata:
+      labels:
+        app: snack-db
+    spec:
+      containers:
+      - name: snack-db
+        image: dbsgpwn2062/snackmong:2.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: PORT
+          value: "27017"
+        envFrom:
+        - configMapRef:
+            name: snack-mongodb-cm
+        - secretRef:
+            name: snack-db-pwd
+        volumeMounts:
+        - name: mongo-volume
+          mountPath: /data/db
+      volumes:
+      - name: mongo-volume
+        persistentVolumeClaim:
+          claimName: snack-mongodb-pvc
+---
+################################################################################
+# 2) snack-db Service
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack-db
+  namespace: db
+spec:
+  selector:
+    app: snack-db
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  type: ClusterIP
+---
+################################################################################
+# 2-2) snack-db ConfigMap
+################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snack-mongodb-cm
+  namespace: db
+data:
+  MONGO_INITDB_ROOT_USERNAME: "admin"
+---
+################################################################################
+# 3) snack-backend Deployment
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snack-backend
+  namespace: back
+  labels:
+    app: snack-backend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: snack-backend
+  template:
+    metadata:
+      labels:
+        app: snack-backend
+    spec:
+      containers:
+      - name: snack-backend
+        image: dbsgpwn2062/k8s_back:6.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: GUESTBOOK_DB_ADDR
+          value: "snack-db.db.svc.cluster.local:27017"
+        envFrom:
+        - configMapRef:
+            name: snack-back-cm
+        - secretRef:
+            name: snack-back-pwd
+---
+################################################################################
+# 4) snack-backend Service
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack-backend
+  namespace: back
+spec:
+  selector:
+    app: snack-backend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+################################################################################
+# 4-1) snack-backend ConfigMap
+################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snack-back-cm
+  namespace: back
+data:
+  MONGO_INITDB_ROOT_USERNAME: "admin"
+---
+################################################################################
+# 5) snack-frontend Deployment
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snack-frontend
+  namespace: front
+  labels:
+    app: snack-frontend
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: snack-frontend
+  template:
+    metadata:
+      labels:
+        app: snack-frontend
+    spec:
+      containers:
+      - name: snack-frontend
+        image: kongjub/front:1.0
+        ports:
+        - containerPort: 3001
+        env:
+        - name: PORT
+          value: "3001"
+        - name: GUESTBOOK_API_ADDR
+          value: "snack-backend.back.svc.cluster.local:3000"
+---
+################################################################################
+# 6) snack-frontend Service
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack-frontend
+  namespace: front
+spec:
+  selector:
+    app: snack-frontend
+  ports:
+  - protocol: TCP
+    port: 3001
+    targetPort: 3001
+  type: NodePort
