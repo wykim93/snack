@@ -18,5 +18,5 @@ workflows:
     jobs:
       - say-hello
       - slack/notify: # Slack 알림 추가
-          event: always  # 항상 알림을 보냄 (빌드 성공, 실패 포함)
+          event: always
 
