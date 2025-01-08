@@ -164,7 +164,7 @@ spec:
     spec:
       containers:
       - name: snack-frontend
-        image: kongjub/front:1.0
+        image: wonyoung1/front:1.0
         ports:
         - containerPort: 3001
         env:
