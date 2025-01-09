@@ -42,6 +42,7 @@ router.post("/snacks", async (req, res) => {
 
 // /snacks/required 요청 핸들러 예시
 router.post("/snacks/required", async (req, res) => {
+  console.log("good called");
   const snackName = req.query.name;
 
   if (!snackName) {
