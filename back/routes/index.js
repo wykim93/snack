@@ -42,7 +42,6 @@ router.post("/snacks", async (req, res) => {
 
 // /snacks/required 요청 핸들러 예시
 router.post("/snacks/required", async (req, res) => {
-  console.log("good called");
   const snackName = req.query.name;
 
   if (!snackName) {
@@ -75,7 +74,6 @@ router.post("/snacks/required", async (req, res) => {
 });
 
 router.get("/snacks/ranking", async (req, res) => {
-  console.log("ranking page called");
   try {
     // 좋아요 순으로 정렬하여 데이터 반환
     const snacks = await snackModel.find().sort({ required: -1 }).limit(5); // 좋아요 순으로 내림차순 정렬
