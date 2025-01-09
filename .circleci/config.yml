@@ -54,7 +54,7 @@ jobs:
           name: Build and Push Front-end Image
           command: |
             cd front
-            docker build -t front ./front
+            docker build -t front .
             docker tag front:latest $AWS_ECR_FRONT_URL:2.0
             docker push $AWS_ECR_FRONT_URL:2.0
       - slack/notify:
@@ -82,14 +82,14 @@ jobs:
             echo "Region : $AWS_REGION"
             echo "ECR_URL: $ECR URL: $AWS_ECR_FRONT_URL"
             aws ecr get-login-password --region $AWS_REGION | \
-            docker login --username AWS --password-stdin $AWS_ECR_FRONT_URL || exit 1
+            docker login --username AWS --password-stdin $AWS_ECR_BACK_URL || exit 1
       - run:
           name: Build and Push Front-end Image
           command: |
-            cd front
-            docker build -t front ./front
-            docker tag front:latest $AWS_ECR_FRONT_URL:2.0
-            docker push $AWS_ECR_FRONT_URL:2.0
+            cd back
+            docker build -t back .
+            docker tag front:latest $AWS_ECR_BACK_URL:2.0
+            docker push $AWS_ECR_BACK_URL:2.0
       - slack/notify:
           event: fail
           template: basic_fail_1
