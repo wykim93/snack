@@ -19,12 +19,17 @@ jobs:
             echo "Contents:"
             ls -al
       - run:
-          name: Install Dependencies
+          name: Install front Dependencies
           command: |
             cd front
             npm install
+      - run:
+          name: Install back Dependencies
+          command: |
+            cd back
+            npm install
 
-  build-and-push:
+  build-and-push-front:
     executor: default-executor
     steps:
       - setup_remote_docker
@@ -39,6 +44,23 @@ jobs:
           command: |
             echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
             docker push wonyoung1/front:1.0
+
+  build-and-push-back:
+    executor: default-executor
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build Docker Image
+          command: |
+            cd back
+            docker build -t wonyoung1/back:1.0 .
+      - run:
+          name: Push Docker Image to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+            docker push wonyoung1/back:1.0
+
 
 workflows:
   version: 2
