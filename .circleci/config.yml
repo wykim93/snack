@@ -55,9 +55,9 @@ jobs:
           name: Build and Push Front-end Image
           command: |
             cd front
-            docker build -t front:2.1 .
-            docker tag front:2.1 $AWS_ECR_FRONT_URL:2.1
-            docker push $AWS_ECR_FRONT_URL:2.1
+            docker build -t front:2.2 .
+            docker tag front:2.2 $AWS_ECR_FRONT_URL:2.2
+            docker push $AWS_ECR_FRONT_URL:2.2
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -89,9 +89,9 @@ jobs:
           name: Build and Push Back-end Image
           command: |
             cd back
-            docker build -t back:2.1 .
-            docker tag back:2.1 $AWS_ECR_BACK_URL:2.1
-            docker push $AWS_ECR_BACK_URL:2.1
+            docker build -t back:2.2 .
+            docker tag back:2.2 $AWS_ECR_BACK_URL:2.2
+            docker push $AWS_ECR_BACK_URL:2.2
       - slack/notify:
           event: fail
           template: basic_fail_1

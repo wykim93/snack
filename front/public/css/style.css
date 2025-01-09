@@ -1,8 +1,8 @@
 /* 전체 레이아웃 설정 */
 body {
   font-family: "Roboto", sans-serif;
-  background-color: #f3f0eb;
-  color: #3d2b1f;
+  background-color: #e9f0fa;
+  color: #422e20;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@ body {
 .header {
   text-align: center;
   padding: 40px 0;
-  background-color: #f3f0eb;
+  background-color: #fafafaf9;
   border-bottom: 2px solid #ddd;
   width: 100%;
   max-width: 1200px;
@@ -22,7 +22,6 @@ body {
   flex-direction: column;
   align-items: center; /* 수직 방향으로 중앙 정렬 */
 }
-
 .logo {
   font-size: 4rem; /* 크기 증가 */
   font-family: "Georgia", serif;
@@ -614,7 +613,12 @@ h1 a {
   left: 10px;
   z-index: 1000;
 }
-
+.menu-button-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
 .menu-button {
   background-color: #f3f0eb;
   border: none;
