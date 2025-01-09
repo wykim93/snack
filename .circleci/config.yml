@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  slack: circleci/slack@4.10.1
-
 executors:
   default-executor:
     docker:
@@ -42,14 +39,6 @@ jobs:
           command: |
             echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
             docker push wonyoung1/front:1.0
-
-      # Slack 알림 추가 (성공/실패 이벤트)
-      - slack/notify:
-          event: fail  # 빌드 실패 시 알림 전송
-          template: basic_fail_1
-      - slack/notify:
-          event: pass  # 빌드 성공 시 알림 전송
-          template: basic_success_1
 
 workflows:
   version: 2

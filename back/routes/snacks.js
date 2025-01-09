@@ -82,18 +82,30 @@ const userModel = mongoose.model("User", userSchema); // users 컬렉션 모델
 // snacks 데이터를 생성 및 저장하는 함수
 const createSnack = async (params) => {
   try {
+    console.log("CreateSnack called");
+    console.log("params:", params);
+
     const snack = new snackModel({
       name: params.name,
       image: params.image,
       nutritionalIngredients: params.nutritionalIngredients,
     });
+
+    console.log("create snack model success :", snack);
+
     const validationError = snack.validateSync();
     if (validationError) {
+      console.error("validationError :", validationError.message);
       throw validationError;
     }
+
+    console.log("validate success. Snack data saving...");
     await snack.save();
+    console.log("Snack data save ok :", snack);
+
     return snack;
   } catch (error) {
+    console.error("createSnack error:", error.message);
     throw error;
   }
 };

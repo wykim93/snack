@@ -1,17 +1,22 @@
-# Use base node 8 image from Docker hub
-FROM node:16
+# back_snack Dockerfile
+FROM alpine:3.19
 
-WORKDIR /backend
+# 환경 설정
+ENV PORT=3000
+ENV GUESTBOOK_DB_ADDR=db_snack:27017
 
-# Copy package.json and install dependencies
-COPY package*.json ./
+# 필수 패키지 설치
+RUN apk update && \
+    apk add --no-cache nodejs npm git
+
+# 작업 디렉터리 설정
+WORKDIR /app
+
+# 로컬 소스 복사
+COPY . /app
+
+# NPM 설치
 RUN npm install
 
-# Copy rest of the application csource code
-COPY . .
-
-# Run app.js with debugging port when container launches
-ENTRYPOINT ["node", "--inspect=9229", "app.js"]
-
-# Comment above and uncomment below to run app.js without debugger port when container launches
-# ENTRYPOINT ["node", "app.js"]
+# 앱 실행
+CMD ["npm", "start"]

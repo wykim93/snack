@@ -94,7 +94,7 @@ spec:
     spec:
       containers:
       - name: snack-backend
-        image: dbsgpwn2062/k8s_back:6.0
+        image: wonyoung1/back:1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
