@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@4.10.1  # Slack Orb 추가
+
 executors:
   default-executor:
     docker:
@@ -44,6 +47,13 @@ jobs:
           command: |
             echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
             docker push wonyoung1/front:1.5
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
 
   build-and-push-back:
     executor: default-executor
@@ -60,6 +70,13 @@ jobs:
           command: |
             echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
             docker push wonyoung1/back:1.5
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
 
 
 workflows:
