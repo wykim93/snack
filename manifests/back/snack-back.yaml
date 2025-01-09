@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: snack-backend
-        image: 385070216929.dkr.ecr.ap-northeast-2.amazonaws.com/back:2.0
+        image: public.ecr.aws/y6g9k7g1/cicd/back:2.0
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
