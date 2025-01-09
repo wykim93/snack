@@ -38,15 +38,25 @@ jobs:
       - setup_remote_docker
       - checkout
       - run:
-          name: Build Docker Image
+          name: Install AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install awscli -y
+      - run:
+          name: Authenticate with ECR front
+          command: |
+            echo "Authenticate to Frontend ECR"
+            echo "Region : $AWS_REGION"
+            echo "ECR_URL: $ECR URL: $AWS_ECR_FRONT_URL"
+            aws ecr get-login-password --region $AWS_REGION | \
+            docker login --username AWS --password-stdin $AWS_ECR_FRONT_URL || exit 1
+      - run:
+          name: Build and Push Front-end Image
           command: |
             cd front
-            docker build -t wonyoung1/front:1.5 .
-      - run:
-          name: Push Docker Image to Docker Hub
-          command: |
-            echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-            docker push wonyoung1/front:1.5
+            docker build -t front ./front
+            docker tag front:latest $AWS_ECR_FRONT_URL:2.0
+            docker push $AWS_ECR_FRONT_URL:2.0
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -61,15 +71,25 @@ jobs:
       - setup_remote_docker
       - checkout
       - run:
-          name: Build Docker Image
+          name: Install AWS CLI
           command: |
-            cd back
-            docker build -t wonyoung1/back:1.5 .
+            sudo apt-get update
+            sudo apt-get install awscli -y
       - run:
-          name: Push Docker Image to Docker Hub
+          name: Authenticate with ECR front
           command: |
-            echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-            docker push wonyoung1/back:1.5
+            echo "Authenticate to Frontend ECR"
+            echo "Region : $AWS_REGION"
+            echo "ECR_URL: $ECR URL: $AWS_ECR_FRONT_URL"
+            aws ecr get-login-password --region $AWS_REGION | \
+            docker login --username AWS --password-stdin $AWS_ECR_FRONT_URL || exit 1
+      - run:
+          name: Build and Push Front-end Image
+          command: |
+            cd front
+            docker build -t front ./front
+            docker tag front:latest $AWS_ECR_FRONT_URL:2.0
+            docker push $AWS_ECR_FRONT_URL:2.0
       - slack/notify:
           event: fail
           template: basic_fail_1
