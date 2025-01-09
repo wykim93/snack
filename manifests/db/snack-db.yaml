@@ -1,0 +1,68 @@
+################################################################################
+# 1) snack-db Deployment
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snack-db
+  namespace: db
+  labels:
+    app: snack-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snack-db
+  template:
+    metadata:
+      labels:
+        app: snack-db
+    spec:
+      containers:
+      - name: snack-db
+        image: dbsgpwn2062/snackmong:2.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: PORT
+          value: "27017"
+        envFrom:
+        - configMapRef:
+            name: snack-mongodb-cm
+        - secretRef:
+            name: snack-db-pwd
+        volumeMounts:
+        - name: mongo-volume
+          mountPath: /data/db
+      volumes:
+      - name: mongo-volume
+        persistentVolumeClaim:
+          claimName: snack-mongodb-pvc
+---
+################################################################################
+# 2) snack-db Service
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack-db
+  namespace: db
+spec:
+  selector:
+    app: snack-db
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  type: ClusterIP
+---
+################################################################################
+# 2-2) snack-db ConfigMap
+################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snack-mongodb-cm
+  namespace: db
+data:
+  MONGO_INITDB_ROOT_USERNAME: "admin"

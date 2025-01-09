@@ -1,0 +1,69 @@
+################################################################################
+# 3) snack-backend Deployment
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snack-backend
+  namespace: back
+  labels:
+    app: snack-backend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: snack-backend
+  template:
+    metadata:
+      labels:
+        app: snack-backend
+    spec:
+      containers:
+      - name: snack-backend
+        image: wonyoung1/back:1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: GUESTBOOK_DB_ADDR
+          value: "snack-db.db.svc.cluster.local:27017"
+        envFrom:
+        - configMapRef:
+            name: snack-back-cm
+        - secretRef:
+            name: snack-back-pwd
+---
+################################################################################
+# 4) snack-backend Service
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack-backend
+  namespace: back
+spec:
+  selector:
+    app: snack-backend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+################################################################################
+# 4-1) snack-backend ConfigMap
+################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snack-back-cm
+  namespace: back
+data:
+  MONGO_INITDB_ROOT_USERNAME: "admin"
