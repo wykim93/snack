@@ -67,5 +67,6 @@ workflows:
   build-and-deploy:
     jobs:
       - build
-      - build-and-push
+      - build-and-push-front
+      - build-and-push-back
 
