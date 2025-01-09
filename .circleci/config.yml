@@ -54,7 +54,7 @@ jobs:
           name: Build and Push Front-end Image
           command: |
             cd front
-            docker build -t front .
+            docker build -t front:2.0 .
             docker tag front:latest $AWS_ECR_FRONT_URL:2.0
             docker push $AWS_ECR_FRONT_URL:2.0
       - slack/notify:
@@ -87,7 +87,7 @@ jobs:
           name: Build and Push Front-end Image
           command: |
             cd back
-            docker build -t back .
+            docker build -t back:2.0 .
             docker tag front:latest $AWS_ECR_BACK_URL:2.0
             docker push $AWS_ECR_BACK_URL:2.0
       - slack/notify:
